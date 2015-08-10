@@ -10,3 +10,4 @@ capnpc = "*"
 [dependencies]
 capnp = "*"
 log = "*"
+byteorder = "*"

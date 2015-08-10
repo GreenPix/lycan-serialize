@@ -1,5 +1,6 @@
 extern crate capnp;
 #[macro_use] extern crate log;
+extern crate byteorder;
 
 #[allow(dead_code)]
 mod notifications_capnp {
@@ -20,3 +21,5 @@ mod common_capnp {
 mod authentication_capnp {
     include!(concat!(env!("OUT_DIR"), "/schemas/authentication_capnp.rs"));
 }
+
+pub mod messages;

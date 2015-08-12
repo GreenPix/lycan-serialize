@@ -102,7 +102,7 @@ impl Notification {
     }
 }
 
-#[derive(Debug,Clone,Copy)]
+#[derive(Debug,Clone,Copy,Hash,PartialEq,Eq)]
 pub struct AuthenticationToken {
     data0: u64,
 }

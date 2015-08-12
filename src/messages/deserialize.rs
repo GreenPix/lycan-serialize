@@ -1,5 +1,8 @@
+use std::io::Read;
+
 use capnp::Error;
-use capnp::message::{Reader,ReaderSegments};
+use capnp::message::{Reader,ReaderOptions};
+use capnp::serialize;
 
 use super::{Notification,EntityOrder,Command,MapCommand,Order,ErrorCode};
 use notifications_capnp::notification;
@@ -7,7 +10,9 @@ use authentication_capnp::response;
 use commands_capnp::{command,map_command,entity_order};
 
 impl Notification {
-    pub fn deserialize<S: ReaderSegments>(message_reader: &Reader<S>) -> Result<Notification,Error> {
+    pub fn deserialize<R: Read>(reader: &mut R) -> Result<Notification,Error> {
+        let options = ReaderOptions::new();
+        let message_reader = try!(serialize::read_message(reader, options));
         let root = try!(message_reader.get_root::<notification::Reader>());
         match try!(root.which()) {
             notification::Which::EntityWalk(walk) => {
@@ -44,14 +49,18 @@ fn deserialize_location(reader: notification::entity_location::Reader) -> Result
 }
 
 impl ErrorCode {
-    pub fn deserialize<S: ReaderSegments>(message_reader: &Reader<S>) -> Result<ErrorCode,Error> {
+    pub fn deserialize<R: Read>(reader: &mut R) -> Result<ErrorCode,Error> {
+        let options = ReaderOptions::new();
+        let message_reader = try!(serialize::read_message(reader, options));
         let root = try!(message_reader.get_root::<response::Reader>());
         Ok(try!(root.get_code()).into())
     }
 }
 
 impl Command {
-    pub fn deserialize<S: ReaderSegments>(message_reader: &Reader<S>) -> Result<Command,Error> {
+    pub fn deserialize<R: Read>(reader: &mut R) -> Result<Command,Error> {
+        let options = ReaderOptions::new();
+        let message_reader = try!(serialize::read_message(reader, options));
         let root = try!(message_reader.get_root::<command::Reader>());
         match try!(root.which()) {
             command::Which::MapCommand(a) => {
@@ -74,12 +83,12 @@ fn deserialize_entity_order(reader: entity_order::Reader) -> Result<EntityOrder,
             Order::Walk(direction.into())
         }
         entity_order::Which::Say(a) => {
-            unimplemented!();
+            Order::Say(try!(a).to_string())
         }
     };
     Ok(EntityOrder::new(entity, order))
 }
 
-fn deserialize_map_command(reader: map_command::Reader) -> Result<MapCommand,Error> {
+fn deserialize_map_command(_reader: map_command::Reader) -> Result<MapCommand,Error> {
     unimplemented!();
 }

@@ -26,6 +26,10 @@ mod serialize;
 pub mod deserialize;
 mod util;
 
+// Reexport the Capnp error type, as it is currently the most widely used
+// In the future, we may create our own error type wrapping everything
+pub use capnp::Error;
+
 #[derive(Debug,Clone,Copy)]
 pub enum Direction {
     North,

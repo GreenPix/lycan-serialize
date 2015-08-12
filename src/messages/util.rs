@@ -1,5 +1,7 @@
 use super::Direction;
 use common_capnp::Direction as CapnpDirection;
+use super::ErrorCode;
+use authentication_capnp::ErrorCode as CapnpErrorCode;
 
 impl From<Option<Direction>> for CapnpDirection {
     fn from(direction: Option<Direction>) -> CapnpDirection {
@@ -25,3 +27,20 @@ impl From<CapnpDirection> for Option<Direction> {
     }
 }
 
+impl From<CapnpErrorCode> for ErrorCode {
+    fn from(code: CapnpErrorCode) -> ErrorCode {
+        match code {
+            CapnpErrorCode::Success => ErrorCode::Success,
+            CapnpErrorCode::Error => ErrorCode::Error,
+        }
+    }
+}
+
+impl From<ErrorCode> for CapnpErrorCode {
+    fn from(code: ErrorCode) -> CapnpErrorCode {
+        match code {
+            ErrorCode::Success => CapnpErrorCode::Success,
+            ErrorCode::Error => CapnpErrorCode::Error,
+        }
+    }
+}

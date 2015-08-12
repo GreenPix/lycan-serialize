@@ -1,9 +1,9 @@
 use capnp::Error;
 use capnp::message::{Reader,ReaderSegments};
 
-use super::{Notification,EntityOrder,Command,MapCommand,Order};
+use super::{Notification,EntityOrder,Command,MapCommand,Order,ErrorCode};
 use notifications_capnp::notification;
-use authentication_capnp::error_code;
+use authentication_capnp::response;
 use commands_capnp::{command,map_command,entity_order};
 
 impl Notification {
@@ -43,9 +43,11 @@ fn deserialize_location(reader: notification::entity_location::Reader) -> Result
     Ok(Notification::location(id, x, y))
 }
 
-pub fn deserialize_error_code<S: ReaderSegments>(message_reader: &Reader<S>) -> Result<i64,Error> {
-    let root = try!(message_reader.get_root::<error_code::Reader>());
-    Ok(root.get_code())
+impl ErrorCode {
+    pub fn deserialize<S: ReaderSegments>(message_reader: &Reader<S>) -> Result<ErrorCode,Error> {
+        let root = try!(message_reader.get_root::<response::Reader>());
+        Ok(try!(root.get_code()).into())
+    }
 }
 
 impl Command {

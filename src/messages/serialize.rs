@@ -1,15 +1,90 @@
 use std::io::{Write,Error};
 use capnp::serialize;
-use capnp::message::{Allocator,Builder};
+use capnp::message::{Allocator,Builder,HeapAllocator};
 
-use byteorder::{LittleEndian, WriteBytesExt};
-
-use messages::{Order,TargettedOrder,Direction};
+use messages::{Order,EntityOrder,Direction,Notification,ErrorCode,AuthenticationToken};
 
 use commands_capnp::command::Builder as CommandBuilder;
 use authentication_capnp::authentication_token::Builder as AuthBuilder;
+use authentication_capnp::response::Builder as ResponseBuilder;
+use notifications_capnp::notification::Builder as NotifBuilder;
 
-pub fn serialize<T: Write>(writer: &mut T, order: &TargettedOrder) -> Result<(),Error> {
+impl EntityOrder {
+    pub fn serialize(&self) -> Builder<HeapAllocator> {
+        let mut builder = Builder::new_default();
+        {
+            let mut root = builder.init_root::<CommandBuilder>().init_entity_order();
+            root.set_entity(self.entity);
+            match self.order {
+                Order::Walk(ref direction) => {
+                    root.set_walk(direction.clone().into());
+                }
+                Order::Say(ref message) => {
+                    root.set_say(message);
+                }
+            }
+        }
+        builder
+    }
+}
+
+impl Notification {
+    pub fn serialize(&self) -> Builder<HeapAllocator> {
+        let mut builder = Builder::new_default();
+        {
+            let mut root = builder.init_root::<NotifBuilder>();
+            match *self {
+                Notification::Location{entity, x, y} => {
+                    let mut builder = root.init_entity_location();
+                    builder.set_id(entity);
+                    let mut location = builder.init_location();
+                    location.set_x(x);
+                    location.set_y(y);
+                }
+                Notification::Say{entity, ref message} => {
+                    let mut builder = root.init_entity_say();
+                    builder.set_id(entity);
+                    builder.set_message(&message);
+                }
+                Notification::Walk{entity, orientation} => {
+                    let mut builder = root.init_entity_walk();
+                    builder.set_id(entity);
+                    builder.set_orientation(orientation.into());
+                }
+                Notification::ThisIsYou{entity} => {
+                    let mut builder = root.init_this_is_you();
+                    builder.set_id(entity);
+                }
+            }
+        }
+        builder
+    }
+}
+
+impl ErrorCode {
+    pub fn serialize(&self) -> Builder<HeapAllocator> {
+        let mut builder = Builder::new_default();
+        {
+            let mut root = builder.init_root::<ResponseBuilder>();
+            let code = self.clone().into();
+            root.set_code(code);
+        }
+        builder
+    }
+}
+
+impl AuthenticationToken {
+    pub fn serialize(&self) -> Builder<HeapAllocator> {
+        let mut builder = Builder::new_default();
+        {
+            let mut root = builder.init_root::<AuthBuilder>();
+            root.set_data0(self.data0);
+        }
+        builder
+    }
+}
+/*
+pub fn serialize<T: Write>(writer: &mut T, order: &EntityOrder) -> Result<(),Error> {
     let id = order.target;
     match order.order {
         Order::Walk(ref direction) => serialize_walk(writer, id, direction),
@@ -37,10 +112,6 @@ fn serialize_walk<T: Write>(writer: &mut T, id: u64, walk: &Option<Direction>) -
 }
 
 // TODO: Make it 256 bits
-pub struct AuthenticationToken {
-    data0: u64,
-}
-
 pub fn forge_authentication_tokens() -> Vec<AuthenticationToken> {
     (0..30).map(|i| {
         AuthenticationToken {
@@ -57,3 +128,4 @@ pub fn send_authentication_token<T: Write>(writer: &mut T, token: &Authenticatio
     }
     serialize_capnp(writer, &mut message_builder)
 }
+*/

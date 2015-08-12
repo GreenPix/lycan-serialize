@@ -1,4 +1,4 @@
-//mod serialize;
+mod serialize;
 pub mod deserialize;
 mod util;
 
@@ -8,7 +8,6 @@ pub use self::serialize::forge_authentication_tokens;
 pub use self::serialize::send_authentication_token;
 pub use self::serialize::AuthenticationToken;
 */
-pub use self::deserialize::deserialize_error_code;
 
 #[derive(Debug,Clone,Copy)]
 pub enum Direction {
@@ -68,7 +67,9 @@ pub enum Notification {
         x: f32,
         y: f32,
     },
-    ThisIsYou(u64),
+    ThisIsYou {
+        entity: u64,
+    },
 }
 
 impl Notification {
@@ -95,6 +96,19 @@ impl Notification {
     }
 
     pub fn this_is_you(id: u64) -> Notification {
-        Notification::ThisIsYou(id)
+        Notification::ThisIsYou {
+            entity: id,
+        }
     }
+}
+
+#[derive(Debug,Clone,Copy)]
+pub struct AuthenticationToken {
+    data0: u64,
+}
+
+#[derive(Debug,Clone,Copy)]
+pub enum ErrorCode {
+    Success,
+    Error,
 }

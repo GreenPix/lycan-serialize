@@ -1,7 +1,7 @@
 use super::Direction;
 use common_capnp::Direction as CapnpDirection;
 use super::ErrorCode;
-use authentication_capnp::ErrorCode as CapnpErrorCode;
+use notifications_capnp::ErrorCode as CapnpErrorCode;
 
 impl From<Option<Direction>> for CapnpDirection {
     fn from(direction: Option<Direction>) -> CapnpDirection {

@@ -17,11 +17,6 @@ mod common_capnp {
     include!(concat!(env!("OUT_DIR"), "/schemas/common_capnp.rs"));
 }
 
-#[allow(dead_code)]
-mod authentication_capnp {
-    include!(concat!(env!("OUT_DIR"), "/schemas/authentication_capnp.rs"));
-}
-
 mod serialize;
 pub mod deserialize;
 mod util;
@@ -64,13 +59,14 @@ pub enum Order {
     // ...
 }
 
-pub enum MapCommand {
+pub enum GameCommand {
     Disconnect,
+    Authenticate(AuthenticationToken),
 }
 
 pub enum Command {
     EntityOrder(EntityOrder),
-    MapCommand(MapCommand),
+    GameCommand(GameCommand),
 }
 
 #[derive(Debug)]
@@ -90,6 +86,9 @@ pub enum Notification {
     },
     ThisIsYou {
         entity: u64,
+    },
+    Response {
+        code: ErrorCode,
     },
 }
 
@@ -121,11 +120,25 @@ impl Notification {
             entity: id,
         }
     }
+
+    pub fn response(code: ErrorCode) -> Notification {
+        Notification::Response {
+            code: code,
+        }
+    }
 }
 
 #[derive(Debug,Clone,Copy,Hash,PartialEq,Eq)]
 pub struct AuthenticationToken {
     data0: u64,
+}
+
+impl AuthenticationToken {
+    pub fn new(data0: u64) -> AuthenticationToken {
+        AuthenticationToken {
+            data0: data0,
+        }
+    }
 }
 
 #[derive(Debug,Clone,Copy)]
@@ -136,9 +149,5 @@ pub enum ErrorCode {
 
 // Hack, to be removed later
 pub fn forge_authentication_tokens() -> Vec<AuthenticationToken> {
-    (0..30).map(|i| {
-        AuthenticationToken {
-            data0: i,
-        }
-    }).collect()
+    (0..30).map(|i| AuthenticationToken::new(i)).collect()
 }

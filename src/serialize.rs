@@ -4,11 +4,9 @@ use capnp::serialize;
 use capnp::message::{Builder,Allocator};
 use byteorder::{LittleEndian, WriteBytesExt};
 
-use super::{Order,EntityOrder,Notification,ErrorCode,AuthenticationToken};
+use super::{Order,EntityOrder,Notification,GameCommand};
 
 use commands_capnp::command::Builder as CommandBuilder;
-use authentication_capnp::authentication_token::Builder as AuthBuilder;
-use authentication_capnp::response::Builder as ResponseBuilder;
 use notifications_capnp::notification::Builder as NotifBuilder;
 
 fn serialize_capnp<A,T>(writer: &mut T, message: &Builder<A>) -> Result<(),Error>
@@ -32,6 +30,25 @@ impl EntityOrder {
                 }
                 Order::Say(ref message) => {
                     root.set_say(message);
+                }
+            }
+        }
+        serialize_capnp(writer, &builder)
+    }
+}
+
+impl GameCommand {
+    pub fn serialize<W: Write>(&self, writer: &mut W) -> Result<(),Error> {
+        let mut builder = Builder::new_default();
+        {
+            let mut root = builder.init_root::<CommandBuilder>().init_game_command();
+            match *self {
+                GameCommand::Disconnect => {
+                    root.set_disconnect(());
+                }
+                GameCommand::Authenticate(ref token) => {
+                    let mut builder = root.init_authenticate();
+                    builder.set_data0(token.data0);
                 }
             }
         }
@@ -66,30 +83,11 @@ impl Notification {
                     let mut builder = root.init_this_is_you();
                     builder.set_id(entity);
                 }
+                Notification::Response{code} => {
+                    let mut builder = root.init_response();
+                    builder.set_code(code.into());
+                }
             }
-        }
-        serialize_capnp(writer, &builder)
-    }
-}
-
-impl ErrorCode {
-    pub fn serialize<W: Write>(&self, writer: &mut W) -> Result<(),Error> {
-        let mut builder = Builder::new_default();
-        {
-            let mut root = builder.init_root::<ResponseBuilder>();
-            let code = self.clone().into();
-            root.set_code(code);
-        }
-        serialize_capnp(writer, &builder)
-    }
-}
-
-impl AuthenticationToken {
-    pub fn serialize<W: Write>(&self, writer: &mut W) -> Result<(),Error> {
-        let mut builder = Builder::new_default();
-        {
-            let mut root = builder.init_root::<AuthBuilder>();
-            root.set_data0(self.data0);
         }
         serialize_capnp(writer, &builder)
     }

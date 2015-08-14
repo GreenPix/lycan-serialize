@@ -81,8 +81,7 @@ pub enum Notification {
     },
     Location {
         entity: u64,
-        x: f32,
-        y: f32,
+        location: Location,
     },
     ThisIsYou {
         entity: u64,
@@ -107,11 +106,10 @@ impl Notification {
         }
     }
 
-    pub fn location(id: u64, x: f32, y: f32) -> Notification {
+    pub fn location(id: u64, location: Location) -> Notification {
         Notification::Location {
             entity: id,
-            x: x,
-            y: y,
+            location: location,
         }
     }
 
@@ -131,6 +129,21 @@ impl Notification {
 #[derive(Debug,Clone,Copy,Hash,PartialEq,Eq)]
 pub struct AuthenticationToken {
     data0: u64,
+}
+
+#[derive(Debug,Clone,Copy)]
+pub struct Location {
+    pub x: f32,
+    pub y: f32,
+}
+
+impl Location {
+    pub fn new(x: f32, y: f32) -> Location {
+        Location {
+            x: x,
+            y: y,
+        }
+    }
 }
 
 impl AuthenticationToken {

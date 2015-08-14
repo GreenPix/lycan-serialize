@@ -4,7 +4,7 @@ use capnp::serialize;
 use capnp::message::{Builder,Allocator};
 use byteorder::{LittleEndian, WriteBytesExt};
 
-use super::{Order,EntityOrder,Notification,GameCommand};
+use super::{Order,EntityOrder,Notification,GameCommand,Location};
 
 use commands_capnp::command::Builder as CommandBuilder;
 use notifications_capnp::notification::Builder as NotifBuilder;
@@ -62,7 +62,7 @@ impl Notification {
         {
             let root = builder.init_root::<NotifBuilder>();
             match *self {
-                Notification::Location{entity, x, y} => {
+                Notification::Location{entity, location: Location{x, y}} => {
                     let mut builder = root.init_entity_location();
                     builder.set_id(entity);
                     let mut location = builder.init_location();

@@ -4,7 +4,7 @@ use capnp::Error;
 use capnp::message::{Reader,ReaderOptions};
 use capnp::serialize;
 
-use super::{Notification,EntityOrder,Command,GameCommand,Order,ErrorCode,AuthenticationToken};
+use super::{Notification,EntityOrder,Command,GameCommand,Order,ErrorCode,AuthenticationToken,Location};
 use notifications_capnp::notification::{self,response};
 use commands_capnp::{command,game_command,entity_order};
 
@@ -48,7 +48,7 @@ fn deserialize_location(reader: notification::entity_location::Reader) -> Result
     let location = try!(reader.get_location());
     let x = location.get_x();
     let y = location.get_y();
-    Ok(Notification::location(id, x, y))
+    Ok(Notification::location(id, Location::new(x, y)))
 }
 
 impl ErrorCode {

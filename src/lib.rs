@@ -1,6 +1,7 @@
 extern crate capnp;
 #[macro_use] extern crate log;
 extern crate byteorder;
+#[cfg(feature="json")] extern crate rustc_serialize;
 
 #[allow(dead_code)]
 mod notifications_capnp {
@@ -25,6 +26,7 @@ mod util;
 // In the future, we may create our own error type wrapping everything
 pub use capnp::Error;
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy)]
 pub enum Direction {
     North,
@@ -33,6 +35,7 @@ pub enum Direction {
     West,
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug)]
 pub struct EntityOrder {
     pub entity: u64,
@@ -48,6 +51,7 @@ impl EntityOrder {
     }
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug)]
 pub enum Order {
     Walk(Option<Direction>),
@@ -59,16 +63,19 @@ pub enum Order {
     // ...
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 pub enum GameCommand {
     Disconnect,
     Authenticate(AuthenticationToken),
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 pub enum Command {
     EntityOrder(EntityOrder),
     GameCommand(GameCommand),
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug)]
 pub enum Notification {
     Walk {
@@ -126,11 +133,13 @@ impl Notification {
     }
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy,Hash,PartialEq,Eq)]
 pub struct AuthenticationToken {
     data0: u64,
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy)]
 pub struct Location {
     pub x: f32,
@@ -154,6 +163,7 @@ impl AuthenticationToken {
     }
 }
 
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy)]
 pub enum ErrorCode {
     Success,

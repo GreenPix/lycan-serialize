@@ -11,3 +11,11 @@ capnpc = "*"
 capnp = "*"
 log = "*"
 byteorder = "*"
+
+[features]
+# Use JSON as serialization format instead of CapnProto
+json = ["rustc-serialize"]
+
+[dependencies.rustc-serialize]
+version = "*"
+optional = true

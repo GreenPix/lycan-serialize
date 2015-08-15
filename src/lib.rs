@@ -36,7 +36,7 @@ pub enum Direction {
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub struct EntityOrder {
     pub entity: u64,
     pub order: Order,
@@ -52,7 +52,7 @@ impl EntityOrder {
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub enum Order {
     Walk(Option<Direction>),
     Say(String),
@@ -64,19 +64,21 @@ pub enum Order {
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
+#[derive(Debug,Clone)]
 pub enum GameCommand {
     Disconnect,
     Authenticate(AuthenticationToken),
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
+#[derive(Debug,Clone)]
 pub enum Command {
     EntityOrder(EntityOrder),
     GameCommand(GameCommand),
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
-#[derive(Debug)]
+#[derive(Debug,Clone)]
 pub enum Notification {
     Walk {
         entity: u64,

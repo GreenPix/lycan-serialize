@@ -11,7 +11,7 @@ mod capnp {
     use commands_capnp::{command,game_command,entity_order};
 
     impl Notification {
-        pub fn deserialize<R: Read>(reader: &mut R) -> Result<Notification,Error> {
+        pub fn deserialize<R: Read>(reader: &mut R, _size: u64) -> Result<Notification,Error> {
             let options = ReaderOptions::new();
             let message_reader = try!(serialize::read_message(reader, options));
             let root = try!(message_reader.get_root::<notification::Reader>());
@@ -54,7 +54,7 @@ mod capnp {
     }
 
     impl Command {
-        pub fn deserialize<R: Read>(reader: &mut R) -> Result<Command,Error> {
+        pub fn deserialize<R: Read>(reader: &mut R, _size: u64) -> Result<Command,Error> {
             let options = ReaderOptions::new();
             let message_reader = try!(serialize::read_message(reader, options));
             let root = try!(message_reader.get_root::<command::Reader>());
@@ -110,21 +110,24 @@ mod json {
 
     use super::super::{Notification,Command};
 
-    fn deserialize_json<T: Decodable,R: Read>(reader: &mut R) -> Result<T,Error> {
-        let json = try!(Json::from_reader(reader).map_err(convert_builder_err));
+    fn deserialize_json<T: Decodable,R: Read>(reader: &mut R, size: u64) -> Result<T,Error> {
+        let mut take = reader.take(size);
+        trace!("Building JSON");
+        let json = try!(Json::from_reader(&mut take).map_err(convert_builder_err));
+        trace!("Deserializing {}", json);
         let mut decoder = Decoder::new(json);
         T::decode(&mut decoder).map_err(convert_decoder_err)
     }
 
     impl Notification {
-        pub fn deserialize<R: Read>(reader: &mut R) -> Result<Notification,Error> {
-            deserialize_json(reader)
+        pub fn deserialize<R: Read>(reader: &mut R, size: u64) -> Result<Notification,Error> {
+            deserialize_json(reader, size)
         }
     }
 
     impl Command {
-        pub fn deserialize<R: Read>(reader: &mut R) -> Result<Command,Error> {
-            deserialize_json(reader)
+        pub fn deserialize<R: Read>(reader: &mut R, size: u64) -> Result<Command,Error> {
+            deserialize_json(reader, size)
         }
     }
 

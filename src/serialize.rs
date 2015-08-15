@@ -104,24 +104,27 @@ mod json {
     use rustc_serialize::Encodable;
     use rustc_serialize::json;
 
-    use super::super::{EntityOrder,Notification,GameCommand};
+    use super::super::{EntityOrder,Notification,GameCommand,Command};
 
     fn serialize_json<T: Encodable,W: Write>(object: &T, writer: &mut W) -> Result<(),Error> {
         let json = json::encode(object).unwrap();
         let size = json.len();
         try!(writer.write_u64::<LittleEndian>(size as u64));
+        trace!("Writing {}", json);
         write!(writer, "{}", json)
     }
 
     impl EntityOrder {
         pub fn serialize<W: Write>(&self, writer: &mut W) -> Result<(),Error> {
-            serialize_json(self, writer)
+            let command = Command::EntityOrder(self.clone());
+            serialize_json(&command, writer)
         }
     }
 
     impl GameCommand {
         pub fn serialize<W: Write>(&self, writer: &mut W) -> Result<(),Error> {
-            serialize_json(self, writer)
+            let command = Command::GameCommand(self.clone());
+            serialize_json(&command, writer)
         }
     }
 

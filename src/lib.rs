@@ -106,6 +106,9 @@ pub enum Notification {
     Response {
         code: ErrorCode,
     },
+    EntityHasQuit {
+        entity: u64,
+    },
     NewEntity {
         entity: u64,
         position: Vec2d,
@@ -145,6 +148,12 @@ impl Notification {
     pub fn response(code: ErrorCode) -> Notification {
         Notification::Response {
             code: code,
+        }
+    }
+
+    pub fn entity_has_quit(id: u64) -> Notification {
+        Notification::EntityHasQuit {
+            entity: id,
         }
     }
 

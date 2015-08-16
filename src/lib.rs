@@ -1,10 +1,7 @@
 extern crate capnp;
 #[macro_use] extern crate log;
 extern crate byteorder;
-extern crate nalgebra;
 #[cfg(feature="json")] extern crate rustc_serialize;
-
-use nalgebra::{Pnt2,Vec2};
 
 #[allow(dead_code)]
 mod notifications_capnp {
@@ -28,6 +25,13 @@ mod util;
 // Reexport the Capnp error type, as it is currently the most widely used
 // In the future, we may create our own error type wrapping everything
 pub use capnp::Error;
+
+#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
+#[derive(Debug,Clone,Copy)]
+pub struct Vec2d {
+    pub x: f32,
+    pub y: f32,
+}
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy)]
@@ -93,8 +97,8 @@ pub enum Notification {
     },
     Position {
         entity: u64,
-        position: Pnt2<f32>,
-        speed: Vec2<f32>,
+        position: Vec2d,
+        speed: Vec2d,
     },
     ThisIsYou {
         entity: u64,
@@ -104,7 +108,7 @@ pub enum Notification {
     },
     NewEntity {
         entity: u64,
-        position: Pnt2<f32>,
+        position: Vec2d,
         skin: u64,
     }
 }
@@ -124,7 +128,7 @@ impl Notification {
         }
     }
 
-    pub fn position(id: u64, position: Pnt2<f32>, speed: Vec2<f32>) -> Notification {
+    pub fn position(id: u64, position: Vec2d, speed: Vec2d) -> Notification {
         Notification::Position {
             entity: id,
             position: position,
@@ -144,7 +148,7 @@ impl Notification {
         }
     }
 
-    pub fn new_entity(id: u64, position: Pnt2<f32>, skin: u64) -> Notification {
+    pub fn new_entity(id: u64, position: Vec2d, skin: u64) -> Notification {
         Notification::NewEntity {
             entity: id,
             position: position,

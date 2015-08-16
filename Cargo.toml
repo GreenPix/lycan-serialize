@@ -11,6 +11,7 @@ capnpc = "*"
 capnp = "*"
 log = "*"
 byteorder = "*"
+nalgebra = "*"
 
 [features]
 # Use JSON as serialization format instead of CapnProto

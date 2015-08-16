@@ -1,7 +1,10 @@
 extern crate capnp;
 #[macro_use] extern crate log;
 extern crate byteorder;
+extern crate nalgebra;
 #[cfg(feature="json")] extern crate rustc_serialize;
+
+use nalgebra::{Pnt2,Vec2};
 
 #[allow(dead_code)]
 mod notifications_capnp {
@@ -88,9 +91,10 @@ pub enum Notification {
         entity: u64,
         message: String,
     },
-    Location {
+    Position {
         entity: u64,
-        location: Location,
+        position: Pnt2<f32>,
+        speed: Vec2<f32>,
     },
     ThisIsYou {
         entity: u64,
@@ -98,6 +102,11 @@ pub enum Notification {
     Response {
         code: ErrorCode,
     },
+    NewEntity {
+        entity: u64,
+        position: Pnt2<f32>,
+        skin: u64,
+    }
 }
 
 impl Notification {
@@ -115,10 +124,11 @@ impl Notification {
         }
     }
 
-    pub fn location(id: u64, location: Location) -> Notification {
-        Notification::Location {
+    pub fn position(id: u64, position: Pnt2<f32>, speed: Vec2<f32>) -> Notification {
+        Notification::Position {
             entity: id,
-            location: location,
+            position: position,
+            speed: speed,
         }
     }
 
@@ -133,28 +143,20 @@ impl Notification {
             code: code,
         }
     }
+
+    pub fn new_entity(id: u64, position: Pnt2<f32>, skin: u64) -> Notification {
+        Notification::NewEntity {
+            entity: id,
+            position: position,
+            skin: skin,
+        }
+    }
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy,Hash,PartialEq,Eq)]
 pub struct AuthenticationToken {
     data0: u64,
-}
-
-#[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
-#[derive(Debug,Clone,Copy)]
-pub struct Location {
-    pub x: f32,
-    pub y: f32,
-}
-
-impl Location {
-    pub fn new(x: f32, y: f32) -> Location {
-        Location {
-            x: x,
-            y: y,
-        }
-    }
 }
 
 impl AuthenticationToken {

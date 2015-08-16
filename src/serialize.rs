@@ -6,7 +6,7 @@ mod capnp {
     use capnp::message::{Builder,Allocator};
     use byteorder::{LittleEndian, WriteBytesExt};
 
-    use super::super::{Order,EntityOrder,Notification,GameCommand,Location};
+    use super::super::{Order,EntityOrder,Notification,GameCommand};
 
     use commands_capnp::command::Builder as CommandBuilder;
     use notifications_capnp::notification::Builder as NotifBuilder;
@@ -64,12 +64,12 @@ mod capnp {
             {
                 let root = builder.init_root::<NotifBuilder>();
                 match *self {
-                    Notification::Location{entity, location: Location{x, y}} => {
-                        let mut builder = root.init_entity_location();
+                    Notification::Position{entity, position: Pnt2{x, y}} => {
+                        let mut builder = root.init_entity_position();
                         builder.set_id(entity);
-                        let mut location = builder.init_location();
-                        location.set_x(x);
-                        location.set_y(y);
+                        let mut position = builder.init_position();
+                        position.set_x(x);
+                        position.set_y(y);
                     }
                     Notification::Say{entity, ref message} => {
                         let mut builder = root.init_entity_say();

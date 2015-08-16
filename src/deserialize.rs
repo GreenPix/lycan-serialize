@@ -6,7 +6,7 @@ mod capnp {
     use capnp::message::{Reader,ReaderOptions};
     use capnp::serialize;
 
-    use super::super::{Notification,EntityOrder,Command,GameCommand,Order,AuthenticationToken,Location};
+    use super::super::{Notification,EntityOrder,Command,GameCommand,Order,AuthenticationToken};
     use notifications_capnp::notification;
     use commands_capnp::{command,game_command,entity_order};
 
@@ -19,8 +19,8 @@ mod capnp {
                 notification::Which::EntityWalk(walk) => {
                     deserialize_walk(walk)
                 }
-                notification::Which::EntityLocation(location) => {
-                    deserialize_location(location)
+                notification::Which::EntityPosition(position) => {
+                    deserialize_position(position)
                 }
                 notification::Which::ThisIsYou(id) => {
                     deserialize_this_is_you(id)
@@ -45,12 +45,12 @@ mod capnp {
         Ok(Notification::walk(id, orientation.into()))
     }
 
-    fn deserialize_location(reader: notification::entity_location::Reader) -> Result<Notification,Error> {
+    fn deserialize_position(reader: notification::entity_position::Reader) -> Result<Notification,Error> {
         let id = reader.get_id();
-        let location = try!(reader.get_location());
-        let x = location.get_x();
-        let y = location.get_y();
-        Ok(Notification::location(id, Location::new(x, y)))
+        let position = try!(reader.get_position());
+        let x = position.get_x();
+        let y = position.get_y();
+        Ok(Notification::position(id, Pnt2::new(x, y)))
     }
 
     impl Command {

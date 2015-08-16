@@ -1,3 +1,4 @@
+use nalgebra::Vec2;
 use super::Direction;
 use common_capnp::Direction as CapnpDirection;
 use super::ErrorCode;
@@ -41,6 +42,17 @@ impl From<ErrorCode> for CapnpErrorCode {
         match code {
             ErrorCode::Success => CapnpErrorCode::Success,
             ErrorCode::Error => CapnpErrorCode::Error,
+        }
+    }
+}
+
+impl From<Direction> for Vec2<f32> {
+    fn from(direction: Direction) -> Vec2<f32> {
+        match direction {
+            Direction::North => Vec2::new(0.0, 1.0),
+            Direction::South => Vec2::new(0.0, -1.0),
+            Direction::East  => Vec2::new(1.0, 0.0),
+            Direction::West  => Vec2::new(-1.0, 0.0),
         }
     }
 }

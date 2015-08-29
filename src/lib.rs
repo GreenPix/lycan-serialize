@@ -5,17 +5,17 @@ extern crate byteorder;
 
 #[allow(dead_code)]
 mod notifications_capnp {
-    include!(concat!(env!("OUT_DIR"), "/schemas/notifications_capnp.rs"));
+    include!(concat!(env!("OUT_DIR"), "/notifications_capnp.rs"));
 }
 
 #[allow(dead_code)]
 mod commands_capnp {
-    include!(concat!(env!("OUT_DIR"), "/schemas/commands_capnp.rs"));
+    include!(concat!(env!("OUT_DIR"), "/commands_capnp.rs"));
 }
 
 #[allow(dead_code)]
 mod common_capnp {
-    include!(concat!(env!("OUT_DIR"), "/schemas/common_capnp.rs"));
+    include!(concat!(env!("OUT_DIR"), "/common_capnp.rs"));
 }
 
 mod serialize;

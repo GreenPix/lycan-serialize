@@ -63,7 +63,7 @@ impl EntityOrder {
 pub enum Order {
     Walk(Option<Direction>),
     Say(String),
-    // Attack
+    Attack,
     // Cast spell
     // Talk
     // Exchange

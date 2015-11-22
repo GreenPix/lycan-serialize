@@ -99,6 +99,7 @@ pub enum Notification {
         entity: u64,
         position: Vec2d,
         speed: Vec2d,
+        pv: u64,
     },
     ThisIsYou {
         entity: u64,
@@ -113,6 +114,7 @@ pub enum Notification {
         entity: u64,
         position: Vec2d,
         skin: u64,
+        pv: u64,
     }
 }
 
@@ -131,11 +133,12 @@ impl Notification {
         }
     }
 
-    pub fn position(id: u64, position: Vec2d, speed: Vec2d) -> Notification {
+    pub fn position(id: u64, position: Vec2d, speed: Vec2d, pv: u64) -> Notification {
         Notification::Position {
             entity: id,
             position: position,
             speed: speed,
+            pv: pv,
         }
     }
 
@@ -157,11 +160,12 @@ impl Notification {
         }
     }
 
-    pub fn new_entity(id: u64, position: Vec2d, skin: u64) -> Notification {
+    pub fn new_entity(id: u64, position: Vec2d, skin: u64, pv: u64) -> Notification {
         Notification::NewEntity {
             entity: id,
             position: position,
             skin: skin,
+            pv: pv,
         }
     }
 }

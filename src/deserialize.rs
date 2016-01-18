@@ -104,6 +104,8 @@ mod capnp {
 mod json {
     use std::io::Read;
 
+    // It is unfortunate to keep a dependency on Capnp here, but as the plan is to use it in the
+    // end it is probably better to keep it as is
     use capnp::Error;
     use rustc_serialize::Decodable;
     use rustc_serialize::json::{Json,Decoder,DecoderError,BuilderError};
@@ -132,10 +134,10 @@ mod json {
     }
 
     fn convert_decoder_err(e: DecoderError) -> Error {
-        Error::new_decode_error("JSON deserialization error", Some(e.to_string()))
+        Error::failed(format!("JSON deserialization error: {}", e))
     }
 
     fn convert_builder_err(e: BuilderError) -> Error {
-        Error::new_decode_error("JSON building error", Some(e.to_string()))
+        Error::failed(format!("JSON building error: {}", e))
     }
 }

@@ -22,9 +22,54 @@ mod serialize;
 pub mod deserialize;
 mod util;
 
-// Reexport the Capnp error type, as it is currently the most widely used
-// In the future, we may create our own error type wrapping everything
-pub use capnp::Error;
+#[derive(Debug,Clone)]
+pub struct Error {
+    pub kind: ErrorKind,
+    pub description: String,
+}
+
+#[derive(Debug,Clone,Copy)]
+pub enum ErrorKind {
+    Failed,
+    Disconnected,
+}
+
+use std::fmt;
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> Result<(),fmt::Error> {
+        match self.kind {
+            ErrorKind::Failed => {
+                write!(f, "Failed: {}", self.description)
+            }
+            ErrorKind::Disconnected => {
+                write!(f, "Disconnected: {}", self.description)
+            }
+        }
+    }
+}
+
+impl std::error::Error for Error {
+    fn description(&self) -> &str {
+        &self.description
+    }
+}
+
+impl Error {
+    pub fn failed(description: String) -> Error {
+        Error {
+            description: description,
+            kind: ErrorKind::Failed,
+        }
+    }
+
+    pub fn disconnected(description: String) -> Error {
+        Error {
+            description: description,
+            kind: ErrorKind::Disconnected,
+        }
+    }
+}
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy)]

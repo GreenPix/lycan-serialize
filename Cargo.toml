@@ -1,20 +1,21 @@
 [package]
 name = "lycan-serialize"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Vaelden <maugan.villatel@gmail.com>"]
 build = "build.rs"
 
 [build-dependencies]
-capnpc = "*"
+capnpc = "=0.6.0"
 
 [dependencies]
-capnp = "0.6.0"
+capnp = "=0.6.2"
 log = "*"
 byteorder = "*"
 
 [features]
 # Use JSON as serialization format instead of CapnProto
 json = ["rustc-serialize"]
+default = ["json"]
 
 [dependencies.rustc-serialize]
 version = "*"

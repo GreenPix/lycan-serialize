@@ -1,18 +1,21 @@
-extern crate capnp;
+#[cfg(capnp)] extern crate capnp;
 #[macro_use] extern crate log;
 extern crate byteorder;
 #[cfg(feature="json")] extern crate rustc_serialize;
 
+#[cfg(capnp)]
 #[allow(dead_code)]
 mod notifications_capnp {
     include!(concat!(env!("OUT_DIR"), "/notifications_capnp.rs"));
 }
 
+#[cfg(capnp)]
 #[allow(dead_code)]
 mod commands_capnp {
     include!(concat!(env!("OUT_DIR"), "/commands_capnp.rs"));
 }
 
+#[cfg(capnp)]
 #[allow(dead_code)]
 mod common_capnp {
     include!(concat!(env!("OUT_DIR"), "/common_capnp.rs"));

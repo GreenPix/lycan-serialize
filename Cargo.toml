@@ -4,19 +4,24 @@ version = "0.1.1"
 authors = ["Vaelden <maugan.villatel@gmail.com>"]
 build = "build.rs"
 
-[build-dependencies]
-capnpc = "=0.6.0"
-
 [dependencies]
-capnp = "=0.6.2"
 log = "*"
 byteorder = "*"
 
 [features]
 # Use JSON as serialization format instead of CapnProto
 json = ["rustc-serialize"]
+capnproto = ["capnp", "capnpc"]
 default = ["json"]
 
 [dependencies.rustc-serialize]
 version = "*"
+optional = true
+
+[dependencies.capnp]
+version = "=0.6.2"
+optional = true
+
+[build-dependencies.capnpc]
+version = "=0.6.0"
 optional = true

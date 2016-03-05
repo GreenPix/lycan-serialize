@@ -122,7 +122,7 @@ pub enum Order {
 #[derive(Debug,Clone)]
 pub enum GameCommand {
     Disconnect,
-    Authenticate(AuthenticationToken),
+    Authenticate(u64, AuthenticationToken),
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
@@ -240,6 +240,6 @@ pub enum ErrorCode {
 }
 
 // Hack, to be removed later
-pub fn forge_authentication_tokens() -> Vec<AuthenticationToken> {
-    (0..30).map(|i| AuthenticationToken::new(i)).collect()
+pub fn forge_authentication_tokens() -> Vec<(u64, AuthenticationToken)> {
+    (0..30).map(|i| (i,AuthenticationToken::new(i))).collect()
 }

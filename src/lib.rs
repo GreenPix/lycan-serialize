@@ -219,18 +219,8 @@ impl Notification {
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
-#[derive(Debug,Clone,Copy,Hash,PartialEq,Eq)]
-pub struct AuthenticationToken {
-    data0: u64,
-}
-
-impl AuthenticationToken {
-    pub fn new(data0: u64) -> AuthenticationToken {
-        AuthenticationToken {
-            data0: data0,
-        }
-    }
-}
+#[derive(Debug,Clone,Hash,PartialEq,Eq)]
+pub struct AuthenticationToken(String);
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy)]
@@ -241,5 +231,5 @@ pub enum ErrorCode {
 
 // Hack, to be removed later
 pub fn forge_authentication_tokens() -> Vec<(u64, AuthenticationToken)> {
-    (0..30).map(|i| (i,AuthenticationToken::new(i))).collect()
+    (0..30).map(|i| (i,AuthenticationToken(i.to_string()))).collect()
 }

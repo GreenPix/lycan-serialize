@@ -220,7 +220,7 @@ impl Notification {
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Hash,PartialEq,Eq)]
-pub struct AuthenticationToken(String);
+pub struct AuthenticationToken(pub String);
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
 #[derive(Debug,Clone,Copy)]

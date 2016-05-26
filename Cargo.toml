@@ -7,10 +7,11 @@ build = "build.rs"
 [dependencies]
 log = "*"
 byteorder = "*"
+uuid = "0.2"
 
 [features]
 # Use JSON as serialization format instead of CapnProto
-json = ["rustc-serialize"]
+json = ["rustc-serialize","uuid/rustc-serialize"]
 capnproto = ["capnp", "capnpc"]
 default = ["json"]
 

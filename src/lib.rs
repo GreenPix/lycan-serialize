@@ -2,6 +2,9 @@
 #[macro_use] extern crate log;
 extern crate byteorder;
 #[cfg(feature="json")] extern crate rustc_serialize;
+extern crate uuid;
+
+use uuid::Uuid;
 
 #[cfg(capnp)]
 #[allow(dead_code)]
@@ -122,7 +125,7 @@ pub enum Order {
 #[derive(Debug,Clone)]
 pub enum GameCommand {
     Disconnect,
-    Authenticate(u64, AuthenticationToken),
+    Authenticate(Uuid, AuthenticationToken),
 }
 
 #[cfg_attr(feature="json",derive(RustcEncodable,RustcDecodable))]
@@ -230,6 +233,9 @@ pub enum ErrorCode {
 }
 
 // Hack, to be removed later
-pub fn forge_authentication_tokens() -> Vec<(u64, AuthenticationToken)> {
-    (0..30).map(|i| (i,AuthenticationToken(i.to_string()))).collect()
+pub fn forge_authentication_tokens() -> Vec<(Uuid,AuthenticationToken)> {
+    (0..100).map(|i| {
+        let uuid = Uuid::from_fields(i, 0, 0, &[0,0,0,0,0,0,0,0]).unwrap();
+        (uuid, AuthenticationToken(i.to_string()))
+    }).collect()
 }

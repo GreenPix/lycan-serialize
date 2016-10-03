@@ -7,7 +7,7 @@ build = "build.rs"
 [dependencies]
 log = "*"
 byteorder = "*"
-uuid = "0.2"
+uuid = "0.3"
 
 [features]
 # Use JSON as serialization format instead of CapnProto

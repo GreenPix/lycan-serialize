@@ -101,13 +101,14 @@ mod json {
     use std::io::{Write,Error};
 
     use byteorder::{LittleEndian, WriteBytesExt};
-    use rustc_serialize::Encodable;
-    use rustc_serialize::json;
+    use serde::Serialize;
+    use serde_json;
 
     use super::super::{EntityOrder,Notification,GameCommand,Command};
 
-    fn serialize_json<T: Encodable,W: Write>(object: &T, writer: &mut W) -> Result<(),Error> {
-        let json = json::encode(object).unwrap();
+    fn serialize_json<T: Serialize,W: Write>(object: &T, writer: &mut W) -> Result<(),Error> {
+        // Not really zero-copy ...
+        let json = serde_json::to_string(object).unwrap();
         let size = json.len();
         try!(writer.write_u64::<LittleEndian>(size as u64));
         trace!("Writing {}", json);

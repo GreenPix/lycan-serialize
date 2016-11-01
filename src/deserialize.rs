@@ -105,18 +105,15 @@ mod json {
     use std::io::Read;
 
     use Error;
-    use rustc_serialize::Decodable;
-    use rustc_serialize::json::{Json,Decoder,DecoderError,BuilderError};
+    use serde::Deserialize;
+    use serde_json;
 
     use super::super::{Notification,Command};
 
-    fn deserialize_json<T: Decodable,R: Read>(reader: &mut R, size: u64) -> Result<T,Error> {
+    fn deserialize_json<T: Deserialize,R: Read>(reader: &mut R, size: u64) -> Result<T,Error> {
         let mut take = reader.take(size);
         trace!("Building JSON");
-        let json = try!(Json::from_reader(&mut take).map_err(convert_builder_err));
-        trace!("Deserializing {}", json);
-        let mut decoder = Decoder::new(json);
-        T::decode(&mut decoder).map_err(convert_decoder_err)
+        serde_json::from_reader(&mut take).map_err(convert_err)
     }
 
     impl Notification {
@@ -131,14 +128,8 @@ mod json {
         }
     }
 
-    fn convert_decoder_err(e: DecoderError) -> Error {
-        match e {
-            DecoderError::EOF => Error::disconnected("DecoderError: EOF".into()),
-            other => Error::failed(format!("JSON deserialization error: {}", other)),
-        }
-    }
-
-    fn convert_builder_err(e: BuilderError) -> Error {
-        Error::failed(format!("JSON building error: {}", e))
+    fn convert_err(e: serde_json::Error) -> Error {
+        // TODO: Finer grained error handling (i.e. disconnect)
+        Error::failed(format!("JSON deserialization error: {}", e))
     }
 }

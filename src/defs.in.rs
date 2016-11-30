@@ -110,6 +110,15 @@ pub enum Command {
 
 #[cfg_attr(feature="json",derive(Serialize,Deserialize))]
 #[derive(Debug,Clone)]
+pub struct EntityUpdate {
+    pub entity_id: u64,
+    pub position: Vec2d,
+    pub speed: Vec2d,
+    pub pv: u64,
+}
+
+#[cfg_attr(feature="json",derive(Serialize,Deserialize))]
+#[derive(Debug,Clone)]
 pub enum Notification {
     Walk {
         entity: u64,
@@ -119,11 +128,9 @@ pub enum Notification {
         entity: u64,
         message: String,
     },
-    Position {
-        entity: u64,
-        position: Vec2d,
-        speed: Vec2d,
-        pv: u64,
+    GameUpdate {
+        tick_id: u64,
+        entities: Vec<EntityUpdate>,
     },
     ThisIsYou {
         entity: u64,
@@ -139,7 +146,15 @@ pub enum Notification {
         position: Vec2d,
         skin: u64,
         pv: u64,
-    }
+    },
+    Damage {
+        source: u64,
+        victim: u64,
+        amount: u64,
+    },
+    Death {
+        entity: u64,
+    },
 }
 
 impl Notification {
@@ -154,15 +169,6 @@ impl Notification {
         Notification::Say {
             entity: id,
             message: message,
-        }
-    }
-
-    pub fn position(id: u64, position: Vec2d, speed: Vec2d, pv: u64) -> Notification {
-        Notification::Position {
-            entity: id,
-            position: position,
-            speed: speed,
-            pv: pv,
         }
     }
 

@@ -146,6 +146,7 @@ pub enum Notification {
         position: Vec2d,
         skin: u64,
         pv: u64,
+        nominal_speed: f32,
     },
     Damage {
         source: u64,
@@ -190,12 +191,13 @@ impl Notification {
         }
     }
 
-    pub fn new_entity(id: u64, position: Vec2d, skin: u64, pv: u64) -> Notification {
+    pub fn new_entity(id: u64, position: Vec2d, skin: u64, pv: u64, nominal_speed: f32) -> Notification {
         Notification::NewEntity {
             entity: id,
             position: position,
             skin: skin,
             pv: pv,
+            nominal_speed: nominal_speed,
         }
     }
 }

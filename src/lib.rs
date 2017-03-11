@@ -2,6 +2,7 @@
 extern crate byteorder;
 #[cfg(feature="json")] extern crate serde;
 #[cfg(feature="json")] extern crate serde_json;
+#[cfg(feature="json")] #[macro_use] extern crate serde_derive;
 extern crate uuid;
 
 use uuid::Uuid;

@@ -7,30 +7,30 @@ build = "build.rs"
 [dependencies]
 log = "*"
 byteorder = "*"
-uuid = "0.3"
+uuid = "0.4"
 
 [features]
 # Use JSON as serialization format instead of CapnProto
-json = ["serde","serde_codegen","serde_json","uuid/serde"]
-capnproto = ["capnp", "capnpc"]
+json = ["serde","serde_derive","serde_json","uuid/serde"]
+#capnproto = ["capnp", "capnpc"]
 default = ["json"]
 
 [dependencies.serde]
-version = "0.8"
+version = "0.9"
 optional = true
 
 [dependencies.serde_json]
-version = "0.8"
+version = "0.9"
 optional = true
 
-[build-dependencies.serde_codegen]
-version = "0.8"
+[dependencies.serde_derive]
+version = "0.9"
 optional = true
 
-[dependencies.capnp]
-version = "=0.6.2"
-optional = true
+#[dependencies.capnp]
+#version = "=0.6.2"
+#optional = true
 
-[build-dependencies.capnpc]
-version = "=0.6.0"
-optional = true
+#[build-dependencies.capnpc]
+#version = "=0.6.0"
+#optional = true
